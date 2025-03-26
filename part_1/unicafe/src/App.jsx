@@ -1,5 +1,4 @@
 import { useState } from "react";
-import "./App.css";
 import Header from "./components/Header";
 import Button from "./components/Button";
 import Statistics from "./components/Statistics";
