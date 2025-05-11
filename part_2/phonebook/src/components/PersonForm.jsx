@@ -1,5 +1,6 @@
 import React from "react";
 import { useState } from "react";
+import phonebookServices from "../phonebookServices";
 
 const PersonForm = ({ persons, setPersons }) => {
   const [newName, setNewName] = useState("");
@@ -19,6 +20,12 @@ const PersonForm = ({ persons, setPersons }) => {
     );
   };
 
+  const generateId = () => {
+    const maxId =
+      persons.length > 0 ? Math.max(...persons.map((p) => Number(p.id))) : 1;
+    return (maxId + 1).toString();
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
@@ -27,8 +34,17 @@ const PersonForm = ({ persons, setPersons }) => {
       return;
     }
 
-    const newPerson = { name: newName, phoneNumber: phoneNumber };
-    setPersons(persons.concat(newPerson));
+    const newPerson = {
+      name: newName,
+      phoneNumber: phoneNumber,
+      id: generateId(),
+    };
+
+    phonebookServices.create(newPerson).then((res) => {
+      console.log({ res });
+      setPersons(persons.concat(res));
+    });
+
     setNewName("");
     setPhoneNumber("");
   };
