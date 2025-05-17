@@ -14,11 +14,9 @@ const PersonForm = ({ persons, setPersons }) => {
     setPhoneNumber(event.target.value);
   };
 
-  const isContactNameExists = (name) => {
-    return persons.some(
-      (person) => person.name.toLowerCase() === name.toLowerCase()
-    );
-  };
+  const existingPerson = persons.find(
+    (person) => person.name.toLowerCase() === newName.toLowerCase()
+  );
 
   const generateId = () => {
     const maxId =
@@ -29,24 +27,43 @@ const PersonForm = ({ persons, setPersons }) => {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    if (isContactNameExists(newName)) {
-      alert(`${newName} is already added to phonebook`);
-      return;
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook, replace the old number with a new one - ${phoneNumber}?`
+        )
+      ) {
+        const updatedPerson = { ...existingPerson, phoneNumber: phoneNumber };
+
+        phonebookServices
+          .update(updatedPerson.id, updatedPerson)
+          .then((res) => {
+            console.log({ res });
+            setPersons(
+              persons.map((person) =>
+                person.id !== updatedPerson.id ? person : res
+              )
+            );
+          });
+
+        setNewName("");
+        setPhoneNumber("");
+      }
+    } else {
+      const newPerson = {
+        name: newName,
+        phoneNumber: phoneNumber,
+        id: generateId(),
+      };
+
+      phonebookServices.create(newPerson).then((res) => {
+        console.log({ res });
+        setPersons(persons.concat(res));
+      });
+
+      setNewName("");
+      setPhoneNumber("");
     }
-
-    const newPerson = {
-      name: newName,
-      phoneNumber: phoneNumber,
-      id: generateId(),
-    };
-
-    phonebookServices.create(newPerson).then((res) => {
-      console.log({ res });
-      setPersons(persons.concat(res));
-    });
-
-    setNewName("");
-    setPhoneNumber("");
   };
 
   return (
