@@ -1,7 +1,7 @@
 import React from "react";
 import phonebookServices from "../phonebookServices";
 
-const Persons = ({ persons, setPersons }) => {
+const Persons = ({ persons, setPersons, handleNotification }) => {
   const handleDelete = (person) => {
     if (window.confirm(`Are you sure you want to delete ${person.name}?`)) {
       phonebookServices
@@ -11,7 +11,11 @@ const Persons = ({ persons, setPersons }) => {
         })
         .catch((error) => {
           console.error("Error deleting person:", error);
-          alert(` ${person.name} no longer exist in the server`);
+          handleNotification(
+            ` ${person.name} no longer exist in the server`,
+            true
+          );
+
           setPersons(persons.filter((p) => p.id !== person.id));
         });
     }

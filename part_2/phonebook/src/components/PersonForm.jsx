@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from "react";
 import phonebookServices from "../phonebookServices";
 
-const PersonForm = ({ persons, setPersons }) => {
+const PersonForm = ({ persons, setPersons, handleNotification }) => {
   const [newName, setNewName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
 
@@ -38,7 +38,6 @@ const PersonForm = ({ persons, setPersons }) => {
         phonebookServices
           .update(updatedPerson.id, updatedPerson)
           .then((res) => {
-            console.log({ res });
             setPersons(
               persons.map((person) =>
                 person.id !== updatedPerson.id ? person : res
@@ -48,6 +47,7 @@ const PersonForm = ({ persons, setPersons }) => {
 
         setNewName("");
         setPhoneNumber("");
+        handleNotification(`Contact ${newName} updated successfully`);
       }
     } else {
       const newPerson = {
@@ -57,12 +57,12 @@ const PersonForm = ({ persons, setPersons }) => {
       };
 
       phonebookServices.create(newPerson).then((res) => {
-        console.log({ res });
         setPersons(persons.concat(res));
       });
 
       setNewName("");
       setPhoneNumber("");
+      handleNotification(`New contact ${newName} added successfully`);
     }
   };
 
