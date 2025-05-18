@@ -20,31 +20,11 @@ function App() {
       });
   };
 
-  const fetchWeatherDetails = (selected) => {
-    const capital = selected.capital[0];
-    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-    axios
-      .get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${apiKey}&units=metric`
-      )
-      .then((res) => {
-        setSelectedCountry({ ...selected, weather: res.data });
-      })
-      .catch((err) => {
-        console.error("Error fetching weather details:", err);
-      });
-  };
-
   useEffect(fetchCountries, []);
 
   const handleChange = (e) => {
     setSearchField(e.target.value);
     setSelectedCountry(null);
-  };
-
-  const handleSelectCountry = (country) => {
-    setSelectedCountry(country);
-    fetchWeatherDetails(country);
   };
 
   console.log({ selectedCountry });
@@ -67,7 +47,7 @@ function App() {
             <CountryListItem
               key={country.name.common}
               countryName={country.name.common}
-              onClick={() => handleSelectCountry(country)}
+              onClick={() => setSelectedCountry(country)}
             />
           ))}
         </section>
